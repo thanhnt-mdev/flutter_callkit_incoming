@@ -55,6 +55,7 @@ class CallkitNotificationManager(private val context: Context) {
     private lateinit var notificationBuilder: NotificationCompat.Builder
     private var notificationViews: RemoteViews? = null
     private var notificationSmallViews: RemoteViews? = null
+    private var notificationHeadsUpViews: RemoteViews? = null
     private var notificationId: Int = 9696
 
     private var targetLoadAvatarDefault = object : Target {
@@ -76,6 +77,8 @@ class CallkitNotificationManager(private val context: Context) {
             notificationViews?.setViewVisibility(R.id.ivAvatar, View.VISIBLE)
             notificationSmallViews?.setImageViewBitmap(R.id.ivAvatar, bitmap)
             notificationSmallViews?.setViewVisibility(R.id.ivAvatar, View.VISIBLE)
+            notificationHeadsUpViews?.setImageViewBitmap(R.id.ivAvatar, bitmap)
+            notificationHeadsUpViews?.setViewVisibility(R.id.ivAvatar, View.VISIBLE)
             getNotificationManager().notify(notificationId, notificationBuilder.build())
         }
 
@@ -145,18 +148,29 @@ class CallkitNotificationManager(private val context: Context) {
                 ) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) || isCustomSmallExNotification
             ) {
                 notificationSmallViews =
-                        RemoteViews(context.packageName, R.layout.layout_custom_small_ex_notification)
+                    RemoteViews(context.packageName, R.layout.layout_custom_small_ex_notification)
+                notificationHeadsUpViews =
+                    RemoteViews(
+                        context.packageName, R.layout.layout_custom_small_ex_notification_heads_up
+                    )
                 initNotificationViews(notificationSmallViews!!, data)
+                initNotificationViews(notificationHeadsUpViews!!, data)
             } else {
                 notificationSmallViews =
-                        RemoteViews(context.packageName, R.layout.layout_custom_small_notification)
+                    RemoteViews(context.packageName, R.layout.layout_custom_small_notification)
+                notificationHeadsUpViews =
+                    RemoteViews(
+                        context.packageName,
+                        R.layout.layout_custom_small_notification_heads_up
+                    )
                 initNotificationViews(notificationSmallViews!!, data)
+                initNotificationViews(notificationHeadsUpViews!!, data)
             }
 
             notificationBuilder.setStyle(NotificationCompat.DecoratedCustomViewStyle())
             notificationBuilder.setCustomContentView(notificationSmallViews)
             notificationBuilder.setCustomBigContentView(notificationViews)
-            notificationBuilder.setCustomHeadsUpContentView(notificationSmallViews)
+            notificationBuilder.setCustomHeadsUpContentView(notificationHeadsUpViews)
         } else {
             val avatarUrl = data.getString(EXTRA_CALLKIT_AVATAR, "")
             if (avatarUrl != null && avatarUrl.isNotEmpty()) {
