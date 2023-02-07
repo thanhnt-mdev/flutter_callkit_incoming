@@ -330,6 +330,7 @@ class CallkitNotificationManager(private val context: Context) {
             notificationBuilder.color = Color.parseColor(actionColor)
         } catch (error: Exception) {
         }
+        notificationBuilder.setAutoCancel(true)
 
         val notification = notificationBuilder.build()
         getNotificationManager().notify(notificationId, notification)
